@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>recursion</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  </head>
+
+  <body style="background-color: grey;"> 
+      <script>
+        let company = {
+          sales: [{name: 'John', salary: 1000}, {name: 'Alice', salary: 1600 }],
+          development: {
+            subSubSuperSub:{
+              sales12: [{name: 'John', salary: 1000}, {name: 'Alice', salary: 1000 }],
+              sales22: [{name: 'John', salary: 1000}, {name: 'Alice', salary: 1000 }]
+            },
+            sites: [{name: 'Peter', salary: 2000}, {name: 'Alex', salary: 1800 }],
+            internals: [{name: 'Jack', salary: 1300}]
+          }
+        };
+        console.log(company);
+
+        function sumSalaries(department){
+          console.log(department);
+          if(Array.isArray(department)){
+            console.log('adds to sum');
+            return department.reduce(function(a,b){
+              return a+b.salary
+            },0)
+          }
+          else{
+            console.log('goes deeper');
+            sum = 0
+            for (let subDept of Object.values(department)){
+              // console.log(subDept);
+              sum += sumSalaries(subDept)
+            }
+            return sum
+          }
+        }
+
+        console.log(sumSalaries(company));
+
+        console.log('============================');
+
+        function sumToN(n){
+          if(n==1){
+            return n
+          }
+
+          else{
+            console.log(n);
+            return n + sumToN(n-1)
+          }
+        }
+        console.log(sumToN(5));
+
+        function factorial(n){
+          if(n==1){
+            return 1
+          }
+          else{
+            return n*factorial(n-1)
+          }
+        }
+        console.log(factorial(5));
+
+        function fibbonaciN(n){
+          if(n<=2){
+            return 1
+          }
+          else{
+            return fibbonaciN(n-1) + fibbonaciN(n-2)
+          }
+        }
+        console.log(fibbonaciN(10));
+
+        function powerN(n,p){
+          if(p==0){
+            return 1
+          }
+          else{
+            return n*powerN(2,p-1)
+          }
+        }
+        console.log(powerN(2,4));
+
+        function arrayProduct(arr){
+          if (arr.length===0 && arr){
+            return 1
+          }
+          else{
+            return arr.shift() * arrayProduct(arr)
+          }
+        }
+        console.log(arrayProduct([1,2,3,10]));
+        const nestedObject = {
+            data: {
+                info: {
+                    stuff: {
+                        thing: {
+                            moreStuff: {
+                                magicNumber: 44,
+                                something: 'foo2'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function contains(obj,value){
+          if(obj == value){
+            return true
+          }
+          else{
+            for(let x of Object.values(obj)){
+              console.log(x);
+              return contains(x,value)
+            }
+          }
+          return false
+        }
+
+
+        let hasIt = contains(nestedObject, 44); // true
+        let doesntHaveIt = contains(nestedObject, "foo"); // false
+
+        console.log(hasIt);
+        console.log(doesntHaveIt);
+
+        console.log('=================================================');
+        function totalIntegers(entry){
+          let total = 0
+          for(x of entry){
+            if(Array.isArray(x)){
+              console.log(`array == ${x}`);
+              total += totalIntegers(x)
+            }
+            else if(Number.isInteger(x)){
+              console.log('add tot total');
+              total++
+            }
+          }
+          return total
+
+        }
+
+
+        const seven = totalIntegers([[[5], 3], 0, 2, ['foo'], [], [4, [5, 6]]])
+
+        
+        console.log(seven);
+
+        //problem #8
+        function toSumSquare(arr){
+          let sum = 0
+          for (x of arr){
+            if(Array.isArray(x)){
+              console.log(`array == ${x}`);
+              sum += toSumSquare(x)
+            }
+            else if(Number.isInteger(x)){
+              console.log('squares');
+              sum += (x*x)
+            }
+            
+          }
+          return sum
+        }
+
+        console.log(toSumSquare([10,[[10],10],[10]] ));
+
+        //problem #9
+        function replicate(n,num){
+          let result = []
+          if(n<=0){return []}
+          else{return [num].concat(replicate(n-1,num))}
+        }
+
+        console.log(replicate(3,5));
+
+        //merge sort
+        //i have not yet solved
+
+      </script>
+  </body>
+</html>

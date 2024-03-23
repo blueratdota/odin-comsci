@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>TITLE - binary search tree</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  </head>
+
+  <body style="background-color: grey;"> 
+      <script>
+
+        function mergeSort(array){
+          if(array.length<=1) return array //if true; kani na dayon ang i return dili na i run ang code sa ubos
+          const middle = Math.floor(array.length/2)
+          const leftHalf = array.slice(0,middle)
+          const rightHalf = array.slice(middle,array.length)
+          return merge(mergeSort(leftHalf),mergeSort(rightHalf))
+        }
+
+        function merge(left,right){
+          const result = []
+          while(left.length>0 && right.length>0){ //will end execution if results to null/undefined
+            if(left[0]<right[0]){
+              const toShift = left.shift()
+              result.push(toShift)
+            }
+            else{
+              const toShift = right.shift()
+              result.push(toShift)
+            }
+          }
+          return result.concat(left,right) //concat the remaining left/right after while loop ends, returning the full combined array
+        }
+
+
+        class Node{
+          constructor(value,left=null,right=null){
+            this.value = value
+            this.left
+            this.right
+          }
+        }
+
+        class Tree{
+          constructor(array){
+            const cleanArray = [...new Set(mergeSort(array))]
+            this.root = this.buildTree(cleanArray)
+          }
+
+          buildTree(array){
+            if(array.length == 0){return null}
+            const middle = Math.floor(array.length/2)
+            const newNode = new Node(array[middle])
+
+            newNode.left = this.buildTree(array.slice(0,middle))
+            newNode.right = this.buildTree(array.slice(middle+1,array.length))
+        
+            return newNode
+          }
+
+          insert(value){
+            if(this.find(value)) return
+            let currentNode = this.root
+            let prevNode
+            while(currentNode != null){
+              prevNode = currentNode
+              if(currentNode.value<value){
+                currentNode = currentNode.right
+              }
+              else{
+                currentNode = currentNode.left
+              }
+            }
+            (prevNode.value<value) ? prevNode.right = new Node(value):prevNode.left = new Node(value)
+          }
+
+          delete(value){
+            let currNode = this.locate(value)[0]
+            let prevNode = this.locate(value)[1]
+
+            // for node with two child
+            if(currNode.left != null && currNode.right != null){
+              console.log('has two children');
+              currNode = currNode.right
+              while(currNode){
+                prevNode = currNode
+                currNode = currNode.left
+              }
+              let _prevNode = prevNode.value //just for reference
+              this.delete(prevNode.value)
+              this.locate(value)[0].value = _prevNode //replaces the deleted node
+              return 
+              //move to right, then down to lowest left
+              //current node = lowest left node
+              //delete pointer from prevnode to lowest left
+            }
+
+            // for node with single child
+            if(currNode.left != null || currNode.right != null){
+              console.log('has one child');
+              if(prevNode.left == currNode){
+                prevNode.left = (currNode.left)? currNode.left:currNode.right
+              }
+              else{
+                prevNode.right = (currNode.left)? currNode.left:currNode.right
+              }
+            }      
+
+            // for end leaf
+            if(currNode.left == null && currNode.right == null){ 
+              console.log('has no children');
+              if(prevNode.left == currNode){
+                return prevNode.left=null          
+              }
+              else{
+                return prevNode.right=null
+              }
+            }
+
+          }
+
+          checkBetween(value,prev,curr){
+            let min
+            let max
+            if(prev<curr){
+              max = curr
+              min = prev
+            }
+            else{
+              max = prev
+              min = curr
+            }
+            return value>=min && value<=max
+          }
+
+          locate(value){
+            let currentNode = this.root
+            let prevNode = {value:null}
+            while(currentNode.value != value){
+              prevNode = currentNode
+              // console.log(currentNode);
+              if(currentNode.value<value){
+                currentNode = currentNode.right
+              }
+              else if(currentNode.value>value){
+                currentNode = currentNode.left
+              }
+
+              if(!currentNode){
+                return null
+              }
+            }
+            return[currentNode,prevNode]
+          }
+          find(value){
+            let currentNode = this.root
+            while(currentNode.value != value){
+              if(currentNode.value<value){
+                currentNode = currentNode.right
+              }
+              else if(currentNode.value>value){
+                currentNode = currentNode.left
+              }
+              if(!currentNode){
+                return null
+              }
+            }
+            return currentNode
+          }
+
+          levelOrderIterative(){
+            let arr = []
+            let queue = []
+            let node = this.root
+
+            arr.push(node.value)
+            queue.push(node.left)
+            queue.push(node.right)
+
+            while(queue.length){
+              arr.push(queue[0].value)
+              if(queue[0].left){
+                queue.push(queue[0].left)
+              }
+              if(queue[0].right){
+                queue.push(queue[0].right)
+              }
+              queue.shift()
+            }
+            return arr
+          }
+
+          levelOrderRecursive(arr=[],queue=[],node=this.root){
+            if (node === null){
+              return
+            }
+            console.log([...queue]);
+            arr.push(node.value)
+            if(node.left){
+              queue.push(node.left)
+            }
+            if(node.right){
+              queue.push(node.right)
+            }
+
+
+            // let currentNode = queue[0]
+            //   queue.shift()
+            //   this.levelOrderRecursive(arr,queue,currentNode)
+            while(queue.length){
+              let currentNode = queue[0]
+              queue.shift()
+              this.levelOrderRecursive(arr,queue,currentNode)
+            }
+            //while para habang dili ma satisfy and queue.length, dili mu retrun sa array
+
+
+            return arr
+          }
+
+          inOrder(arr=[],root=this.root){
+            if(root==null) return
+
+            if(root.left){this.inOrder(arr,root.left)}
+            arr.push(root.value)
+            if(root.right){this.inOrder(arr,root.right)}
+            return arr
+
+            // 14>7>5>3>2>1>return
+            // 1 is pushed
+            // 2 is pushed
+            // 3 is pushed
+            // 5 is pushed
+            // 7 is pushed
+            // 7 is pushed, 7 has right, 12 has left
+            // 10>12
+            // 10 is pushed
+            // 12 is pushed
+            // 14 is pushed, 14 has right, 22 has left
+            // 22>19>16>return
+            // 16 is pushed
+            // 19 is pushed
+            // 22 is pushed, 22 has right
+            // 55>return
+            // 55 is pushed
+          }
+
+          depth(node,root = this.root, depth = 0){
+            //recursive -- from root to given node #of edges
+            // console.log(root.value);
+            if(root == null || node == null) return
+            if(node.value == root.value) return `Depth is ${depth}`
+            if(node.value<root.value){
+              return this.depth(node,root.left,depth+=1)
+            }
+            else{
+              return this.depth(node,root.right,depth+=1)
+            }
+          }
+
+          height(node){
+            //recursive --- from given node to lowest leaf #of edges
+           if(node == null || node == undefined) return -1
+
+           let leftStep = this.height(node.left)
+           let rightStep = this.height(node.right)
+
+           return Math.max(leftStep,rightStep)+1 //compares left and right, whichever is bigger gets returned
+           }
+
+           isBalanced(node=this.root){
+            let lHeight = this.height(node.left)
+            let rHeight = this.height(node.right)
+            return Math.abs(lHeight-rHeight)<=1
+           }
+
+           rebalance(){
+            if(this.isBalanced()){
+              return 'already balanced'
+            }
+            else this.root = this.buildTree([...new Set(mergeSort(this.levelOrderIterative()))])
+           }
+
+
+
+
+
+
+
+
+          //  if(leftStep>rightStep){
+          //   return height+=1
+          //  }
+          //  else if(leftStep<rightStep){
+          //   return height+=1
+          //  }
+          
+        }
+
+        const testTree = new Tree([12,3,7,22,16,10,19,50,5,14])
+        testTree.insert(2)
+        testTree.insert(1)
+        // testTree.insert(17)
+        // testTree.insert(18)
+        console.log(testTree.root);
+        console.log(testTree.find(17)); //null
+        console.log(testTree.find(1)); //returns node
+        console.log(testTree.depth(testTree.find(1)));
+        console.log(testTree.height(testTree.find(14)));
+        console.log(testTree.isBalanced());
+        testTree.rebalance()
+        console.log(testTree.root);
+        console.log(testTree.isBalanced());
+        // console.log(testTree.root);
+        // console.log(testTree.root.left.left.left.left.left);
+        
+        
+
+      </script>
+  </body>
+</html>

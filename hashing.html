@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>TITLE - HASHMAP</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  </head>
+
+  <body style="background-color: grey;"> 
+      <script>
+
+        class linkedList{
+          constructor(head){
+            this.head = head
+          }
+
+          append(value){
+            let lastNode = this.head
+            if(lastNode){
+              while(lastNode.next){
+                lastNode = lastNode.next
+              }
+            }
+            lastNode.next = new Node(value)
+          }
+
+          prepend(value){
+            let currentHead = this.head //temp saving current head data
+            this.head = new Node(value) // creating new node for new head
+            this.head.next = currentHead // linking it to the old data set
+          }
+
+          size(node){
+            let counter = 0 
+            node = this.head
+            while (node){
+              counter++
+              node = node.next
+            }
+            return counter
+          }
+
+          head(){
+            return this.head
+          }
+
+          tail(){
+            let lastNode = this.head
+            if(lastNode){
+              while(lastNode.next){
+                lastNode = lastNode.next
+              }
+            }
+            return lastNode
+          }
+
+          at(index){
+            let counter = 0
+            let node = this.head
+            while (counter<index){
+              counter++
+              node = node.next
+            }
+            return node
+          }
+
+          pop(){
+            let lastNode = this.head
+            if(lastNode){
+              while(lastNode.next.next){
+                lastNode = lastNode.next
+              }
+            }
+            lastNode.next = null
+            return 
+          }
+
+          contains(lookFor){
+            let currentNode = this.head
+            while(currentNode){
+              if(currentNode.value[0] == lookFor){
+                return true
+              }
+              currentNode = currentNode.next
+            }
+            return false
+          }
+
+          find(lookFor){
+            let currentNode = this.head
+            let counter = 0
+            while(currentNode){
+              if(currentNode.value[0] == lookFor){
+                return counter
+              }
+              counter ++
+              currentNode = currentNode.next
+  
+            }
+            return null
+          }
+
+          insert(newValue,index){
+            let nextNode = this.at(index)
+            let prevNode = this.at(index-1)
+            prevNode.next = new Node(newValue)
+            prevNode.next.next = nextNode
+          }
+
+          removeAt(index){
+            let prevNode = this.at(index-1)
+            let delNode = this.at(index)
+            prevNode.next = delNode.next
+          }
+
+          toString(){
+            let lastNode = this.head
+            let finalString = ''
+            if(lastNode){
+              while(lastNode.next){
+                finalString += String(lastNode.value) + ' -> '
+                lastNode = lastNode.next
+              }
+              finalString += String(lastNode.value) + ' -> ' + String(lastNode.next)
+            }
+            return finalString
+          }
+
+          toArray(){
+            let thisNode = this.head
+            let keyArray = []
+            let valueArray = []
+            while(thisNode){
+              keyArray.push(thisNode.value[0])
+              valueArray.push(thisNode.value[1])
+              thisNode = thisNode.next
+            }
+            return [keyArray,valueArray]
+          }
+
+          valueArray(){
+            let thisNode = this.head
+            let tempArray = []
+            while(thisNode){
+              tempArray.push(thisNode.value[1])
+              thisNode = thisNode.next
+            }
+            return tempArray
+          }
+
+        }
+
+        class Node{
+
+          constructor(value){
+            this.value = value
+            this.next
+          }
+
+        }
+
+        class HashMap{
+
+          constructor(){
+            this.table = new Array(16)
+            this.size = 0
+          }
+
+          _hash(key){
+            let hashCode = 0;
+      
+            const primeNumber = 31;
+            for (let i = 0; i < key.length; i++) {
+              hashCode = primeNumber * hashCode + key.charCodeAt(i);
+            }
+            return hashCode%16;
+          }
+
+          set(key,value){
+            const index = this._hash(key)
+            if(this.table[index]){
+              if(this.table[index].contains(key)){ //only updates value so no +size
+                const updateNode = this.table[index].at(find(key))
+                updateNode.value[1] = value
+              }
+              else{
+                this.table[index].append([key,value]);
+                this.size ++
+              }
+              
+            }
+            else{
+              const node1 = new Node([key,value])
+              this.table[index] = new linkedList(node1)
+              this.size ++
+            }
+
+          }
+
+          get(key){
+            const index = this._hash(key)
+            const mainNode = this.table[index]
+            const resultNode = mainNode.at(mainNode.find(key))
+            return resultNode.value[1]
+          
+          }
+
+          has(key){
+            const index = this._hash(key)
+            if (this.table[index]){
+              return this.table[index].contains(key)
+            }
+            else{
+              return false
+            }
+          }
+
+          remove(key){
+            const index = this._hash(key)
+            const currentNode = this.table[index]
+            if(currentNode.contains(key)){
+              const _index = currentNode.find(key)
+              let thisNode = currentNode.at(_index)
+              if(_index==0){
+                currentNode.head = thisNode.next
+              }
+              else{
+                let prevNode = currentNode.at(_index-1)
+                prevNode.next = prevNode.next.next
+              }
+              return true
+            }
+            else{
+              return false
+            }
+          }
+
+          length(){
+            return this.size
+          }
+          
+          clear(){
+            this.table = new Array(16)
+            this.size = 0
+          }
+
+          keys(){
+            const allKeys = []
+            this.table.forEach(function(node){
+              node.toArray()[0].forEach((x)=>{
+                allKeys.push(x)
+              })
+            })
+            return allKeys
+          }
+
+          values(){
+            const allValues = []
+            this.table.forEach(function(node){
+              node.toArray()[1].forEach((x)=>{
+                allValues.push(x)
+              })
+            })
+            return allValues
+          }
+
+          entries(){
+            const allKeys = this.keys()
+            const allValues = this.values()
+            const allEntries = []
+            for(let i=0; i<allKeys.length; i++){
+              const tempArray = [allKeys[i],allValues[i]]
+              allEntries.push(tempArray)
+            }
+            return allEntries
+          }
+          
+
+
+        }
+
+        const testHash = new HashMap
+        testHash.set('maney',10)
+        testHash.set('bingo',22)
+        testHash.set('snatcher',1)
+        testHash.set('money',16)
+        testHash.set('maney',69)
+        console.log(testHash.table);
+        testHash.get('money') //16 -->good
+        console.log(testHash.length());
+        console.log(testHash.keys());
+        console.log(testHash.values());
+        console.log(testHash.entries());
+        console.log(testHash.remove('money'));
+        // console.log(testHash.remove('money'));
+        console.log(testHash.remove('moneyxx'));
+        testHash.set('money',9000)
+        console.log(testHash.table);
+
+
+        // console.log(testHash.set('maney',16));
+        // console.log(testHash.table);
+        // console.log(testHash.set('money',16));
+        // console.log(testHash.table[0]);
+
+
+      </script>
+  </body>
+</html>

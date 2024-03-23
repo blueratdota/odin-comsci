@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>reduction</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  </head>
+
+  <body style="background-color: grey;"> 
+      <script>
+        const array1 = [1,2,3,4,4,5,1,4,4,5];
+        
+        //sumer
+        let sum = 0
+        const totalled = array1.reduce(function(a,b){
+          console.log(`a: ${a} === b: ${b}`);
+          return a+b
+        },sum)
+        console.log(totalled);
+        
+        //counter
+        const counter =array1.reduce(function(a,b){
+          if(!a[b]){
+            a[b]=0
+          }
+          a[b]++
+          console.log(a);
+          return a
+        },{})
+
+        console.log('result')
+        console.log(counter);
+
+
+
+
+
+      </script>
+  </body>
+</html>

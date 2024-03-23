@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>recursion</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  </head>
+
+  <body style="background-color: grey;"> 
+      <script>
+        //merge sort
+        //i have not yet solved
+        function mergeSort(array){
+          if(array.length<=1) return array //if true; kani na dayon ang i return dili na i run ang code sa ubos
+
+          const middle = Math.floor(array.length/2)
+          const leftHalf = array.slice(0,middle)
+          const rightHalf = array.slice(middle,array.length)
+          
+          return merge(mergeSort(leftHalf),mergeSort(rightHalf))
+        }
+
+        function merge(left,right){
+          const result = []
+          console.log(`start of merge == left: ${left},right: ${right}`);
+
+          while(left.length>0 && right.length>0){ //will end execution if results to null/undefined
+            if(left[0]<right[0]){
+              const toShift = left.shift()
+              result.push(toShift)
+            }
+            else{
+              const toShift = right.shift()
+              result.push(toShift)
+            }
+          }
+          console.log(result);
+          return result.concat(left,right) //concat the remaining left/right after while loop ends, returning the full combined array
+        }
+        const testArray = [8,4,2,1,6,5,7,3]
+
+        console.log(mergeSort(testArray));
+
+        // function testSort(){
+        //   const result = []
+        //   let left = [2,3,6]
+        //   let right = [1,4,8,12,15]
+
+        //   while(left.length>0 && right.length>0){
+        //       if(left[0]<right[0]){
+        //         const toShift = left.shift()
+        //         result.push(toShift)
+        //       }
+        //       else{
+        //         const toShift = right.shift()
+        //         result.push(toShift)
+        //       }
+        //   }
+          
+        //   return result.concat(left,right)
+
+        // }
+
+        // console.log(testSort());
+
+      </script>
+  </body>
+</html>
